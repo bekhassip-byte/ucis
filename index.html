@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Kelulusan - SMPN 25 Malang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --primary: #0a192f;   /* Navy Blue */
+            --accent: #d4af37;    /* Gold */
+            --white: #ffffff;
+            --bg: #f4f7f6;
+            --text: #333333;
+            --success: #e8f5e9;
+            --success-text: #2e7d32;
+            --error: #ffebee;
+            --error-text: #c62828;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* --- UTILITIES & COMPONENTS --- */
+        .hidden { display: none !important; }
+        
+        .btn {
+            background-color: var(--accent); color: var(--primary); font-weight: 600; font-size: 14px;
+            padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn:disabled, .btn.disabled { background-color: #cccccc !important; color: #666666 !important; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .card { background: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 24px; }
+
+        /* --- ANIMATIONS --- */
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- LAYOUT --- */
+        header { background-color: var(--primary); color: var(--white); text-align: center; padding: 40px 20px 60px; border-bottom: 5px solid var(--accent); }
+        header img { width: 110px; height: auto; margin-bottom: 15px; border-radius: 10px; background: white; padding: 5px;}
+        header h1 { color: var(--accent); font-size: 26px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        header p { opacity: 0.8; font-size: 14px; }
+        
+        main { max-width: 800px; width: 100%; margin: -40px auto 40px; padding: 0 20px; position: relative; z-index: 10; flex: 1; }
+
+        /* --- HALAMAN 1 (BERANDA) --- */
+        .timer-container { display: flex; justify-content: center; gap: 15px; margin: 25px 0; flex-wrap: wrap; }
+        .timer-box { background: var(--primary); color: var(--accent); padding: 15px; border-radius: 8px; text-align: center; min-width: 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .timer-box span { display: block; font-size: 28px; font-weight: 700; line-height: 1.2; }
+        .timer-box small { font-size: 12px; color: var(--white); letter-spacing: 1px; }
+
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 30px; }
+        .info-item { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--accent); }
+        .info-item h4 { color: var(--primary); margin-bottom: 8px; font-size: 16px; }
+        .info-item p { font-size: 13px; color: #555; }
+
+        .stats-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; background: var(--primary); color: var(--white); padding: 25px; border-radius: 12px; margin-top: 25px; }
+        .stat-box { text-align: center; }
+        .stat-box h3 { color: var(--accent); font-size: 28px; margin-bottom: 5px; }
+        .stat-box p { font-size: 13px; opacity: 0.9; }
+
+        /* --- HALAMAN 2 (SAMBUTAN) --- */
+        .signature-area { display: flex; justify-content: flex-end; margin-top: 40px; text-align: left; }
+        .signature-box { display: inline-block; text-align: center; }
+        .signature-box p { margin-bottom: 5px; font-size: 14px; }
+        .signature-img-placeholder { width: 160px; height: 80px; background-color: #f1f1f1; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; margin: 10px auto; color: #aaa; font-style: italic; font-size: 12px;}
+
+        /* --- HALAMAN 3 (FORM CEK) --- */
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .input-group input { flex: 1; min-width: 200px; padding: 14px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s; text-align: center; letter-spacing: 2px;}
+        .input-group input:focus { border-color: var(--primary); }
+
+        .result-box { padding: 30px; border-radius: 12px; text-align: center; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .result-box.lulus { background-color: var(--success); border: 2px solid var(--success-text); }
+        .result-box.tidak-lulus { background-color: var(--error); border: 2px solid var(--error-text); }
+        
+        .result-title { font-size: 32px; font-weight: 700; margin: 15px 0; letter-spacing: 2px; }
+        .lulus .result-title { color: var(--success-text); }
+        .tidak-lulus .result-title { color: var(--error-text); }
+        
+        .student-info { margin: 20px 0; text-align: left; background: rgba(255,255,255,0.8); padding: 20px; border-radius: 8px; }
+        .student-info table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        .student-info td { padding: 8px 0; border-bottom: 1px solid #eee; }
+        .student-info tr:last-child td { border-bottom: none; }
+
+        #loadingState { text-align: center; color: var(--primary); font-size: 14px; margin-bottom: 15px; font-style: italic; }
+
+        footer { text-align: center; padding: 20px; background: var(--primary); color: var(--white); font-size: 13px; border-top: 3px solid var(--accent); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://www.smpn25malang.sch.id/upload/logo.jpg" alt="Logo SMPN 25 Malang">
+        <h1>PENGUMUMAN KELULUSAN</h1>
+        <p>SMPN 25 Malang | Tahun Ajaran 2025/2026</p>
+    </header>
+
+    <main id="app">
+        <section id="view1" class="card slide-up">
+            <div style="text-align: center;">
+                <h2 style="color: var(--primary); font-size: 22px;">Portal Kelulusan Siswa</h2>
+                <p style="color: #666; font-size: 14px; margin-top: 5px;">Waktu pembukaan pengumuman resmi</p>
+            </div>
+            
+            <div id="countdown" class="timer-container">
+                <div class="timer-box"><span id="days">00</span><small>HARI</small></div>
+                <div class="timer-box"><span id="hours">00</span><small>JAM</small></div>
+                <div class="timer-box"><span id="minutes">00</span><small>MENIT</small></div>
+                <div class="timer-box"><span id="seconds">00</span><small>DETIK</small></div>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <button id="btnMasuk" class="btn" style="width: 100%; max-width: 350px;" disabled>PENGUMUMAN BELUM DIBUKA</button>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item"><h4>🎓 Program</h4><p>Fase D (Sekolah Menengah Pertama)</p></div>
+                <div class="info-item"><h4>📍 Lokasi</h4><p>Kota Malang, Jawa Timur</p></div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box"><h3>02 Jun</h3><p>Tanggal Pengumuman</p></div>
+                <div class="stat-box"><h3>2026</h3><p>Tahun Kelulusan</p></div>
+                <div class="stat-box"><h3>A</h3><p>Akreditasi Sekolah</p></div>
+            </div>
+        </section>
+
+        <section id="view2" class="card hidden slide-up">
+            <h2 style="color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 15px; margin-bottom: 20px;">Sambutan Kepala Sekolah</h2>
+            
+            <div style="font-size: 14px; color: #444;">
+                <p style="line-height: 1.8; text-align: justify; margin-bottom: 15px;">
+                    <em>Assalamu'alaikum Warahmatullahi Wabarakatuh,</em><br><br>
+                    Puji syukur kehadirat Tuhan Yang Maha Esa atas rahmat dan karunia-Nya. Selamat kepada seluruh siswa-siswi kelas IX SMPN 25 Malang Tahun Ajaran 2025/2026 yang telah menyelesaikan masa pendidikannya di sekolah tercinta ini.
+                </p>
+                <p style="line-height: 1.8; text-align: justify;">
+                    Kelulusan ini bukanlah akhir dari perjalanan belajar kalian, melainkan langkah awal menuju gerbang kesuksesan yang lebih besar di tingkat pendidikan menengah atas. Teruslah mengukir prestasi, junjung tinggi nama baik almamater, dan jadilah kebanggaan bagi orang tua serta bangsa.
+                </p>
+            </div>
+            
+            <div class="signature-area">
+                <div class="signature-box">
+                    <p>Malang, 2 Juni 2026</p>
+                    <p>Kepala SMPN 25 Malang,</p>
+                    <div class="signature-img-placeholder">[ Tanda Tangan ]</div>
+                    <strong style="color: var(--primary); font-size: 16px;">Lila Puspitasari, M.Pd</strong><br>
+                    <span style="font-size: 13px; color: #666;">NIP. 196811161998032001</span>
+                </div>
+            </div>
+
+            <div class="nav-buttons" style="display: flex; justify-content: space-between; margin-top: 40px; gap: 10px; flex-wrap: wrap;">
+                <button class="btn" style="background: #e0e0e0; color: #333;" onclick="navigate('view1')">Kembali ke Beranda</button>
+                <button class="btn" onclick="navigate('view3')">Lanjut Cek Kelulusan &raquo;</button>
+            </div>
+        </section>
+
+        <section id="view3" class="card hidden slide-up">
+            <h2 style="color: var(--primary); text-align: center; margin-bottom: 10px;">Cek Status Kelulusan</h2>
+            <p style="text-align: center; margin-bottom: 25px; font-size: 14px; color: #666;">Silakan masukkan Nomor Induk Siswa Nasional (NISN) Anda pada kolom di bawah ini.</p>
+            
+            <div id="loadingState" class="hidden">🔄 Sedang menyinkronkan data dari server...</div>
+
+            <div class="input-group">
+                <input type="text" id="nisnInput" placeholder="Ketik NISN..." autocomplete="off">
+                <button class="btn" id="btnCek" onclick="checkStatus()">CEK SEKARANG</button>
+            </div>
+            
+            <div id="errorMsg" style="color: var(--error-text); text-align: center; margin-bottom: 15px; font-weight: 600; font-size: 14px; background: var(--error); padding: 10px; border-radius: 8px;" class="hidden">
+                ⚠️ Data dengan NISN tersebut tidak ditemukan!
+            </div>
+
+            <div id="resultArea" class="hidden fade-in"></div>
+
+            <div class="nav-buttons" style="text-align: center; margin-top: 30px;">
+                <button class="btn" style="background: transparent; color: var(--primary); border: 2px solid var(--primary); width: 100%; max-width: 300px;" onclick="navigate('view2')">&laquo; Kembali ke Sambutan</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="currentYear"></span> SMPN 25 Malang. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- 1. PENGATURAN GOOGLE SHEETS ---
+        // GANTI URL DI BAWAH INI DENGAN URL CSV DARI GOOGLE SHEETS ANDA
+        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSF97w3XexWOt3UELoinWjtCVrIB3mHHRmrQ-ZBSGdfLhy_BO1qh7yTEw7xcKz2FhhFwugN-Dbp9fvH/pub?gid=0&single=true&output=csv";
+        
+        let studentsData = [];
+        let isDataLoaded = false;
+
+        async function fetchGoogleSheetsData() {
+            try {
+                const response = await fetch(sheetUrl);
+                if (!response.ok) throw new Error("Gagal mengambil data jaringan");
+                
+                const dataCSV = await response.text();
+                parseCSV(dataCSV);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('loadingState').textContent = "⚠️ Gagal mengambil data. Pastikan URL CSV benar.";
+                document.getElementById('loadingState').style.color = "red";
+            }
+        }
+
+        // --- UPDATE PARSER SESUAI FORMAT BARU ---
+        // Format Wajib Header: nama, nisn, kelas, status, link_skl, link_tka
+        function parseCSV(csvText) {
+            studentsData = [];
+            const rows = csvText.trim().split('\n');
+            
+            for(let i = 1; i < rows.length; i++) {
+                // Regex pemisah koma yang mengabaikan koma di dalam tanda kutip
+                const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                
+                if(cols.length >= 6) { // Pastikan ada 6 kolom
+                    studentsData.push({
+                        nama: cols[0].replace(/"/g, '').trim(),
+                        nisn: cols[1].replace(/"/g, '').trim(),
+                        kelas: cols[2].replace(/"/g, '').trim(),
+                        status: cols[3].replace(/"/g, '').trim().toUpperCase(),
+                        link_skl: cols[4].replace(/"/g, '').trim(),
+                        link_tka: cols[5].replace(/"/g, '').trim()
+                    });
+                }
+            }
+            isDataLoaded = true;
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('btnCek').removeAttribute('disabled');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            fetchGoogleSheetsData();
+        });
+
+        // --- 2. LOGIKA NAVIGASI SPA ---
+        function navigate(viewId) {
+            document.getElementById('view1').classList.add('hidden');
+            document.getElementById('view2').classList.add('hidden');
+            document.getElementById('view3').classList.add('hidden');
+            
+            document.getElementById(viewId).classList.remove('hidden');
+            
+            if(viewId === 'view3') {
+                document.getElementById('nisnInput').value = '';
+                document.getElementById('resultArea').classList.add('hidden');
+                document.getElementById('errorMsg').classList.add('hidden');
+                
+                if(!isDataLoaded) {
+                    document.getElementById('loadingState').classList.remove('hidden');
+                    document.getElementById('btnCek').setAttribute('disabled', 'true');
+                }
+                
+                setTimeout(() => document.getElementById('nisnInput').focus(), 100);
+            }
+        }
+
+        // --- 3. LOGIKA COUNTDOWN TIMER ---
+        const countDownDate = new Date("June 1, 2026 11:00:00").getTime();
+        const btnMasuk = document.getElementById("btnMasuk");
+        const countdownEl = document.getElementById("countdown");
+
+        const timerInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").textContent = days.toString().padStart(2, '0');
+                document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
+                document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
+                document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
+            } else {
+                clearInterval(timerInterval);
+                countdownEl.classList.add('hidden');
+                btnMasuk.removeAttribute('disabled');
+                btnMasuk.textContent = "MASUK KE HALAMAN PENGUMUMAN";
+                btnMasuk.onclick = () => navigate('view2');
+            }
+        }, 1000);
+
+        document.getElementById('nisnInput').addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkStatus();
+            }
+        });
+
+        // --- 4. LOGIKA CEK KELULUSAN & TOMBOL DOWNLOAD ---
+        function checkStatus() {
+            if(!isDataLoaded) {
+                alert("Data sedang dimuat, mohon tunggu sebentar.");
+                return;
+            }
+
+            const inputNisn = document.getElementById('nisnInput').value.trim();
+            const resultArea = document.getElementById('resultArea');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            resultArea.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+
+            if(!inputNisn) {
+                document.getElementById('nisnInput').focus();
+                return;
+            }
+
+            const student = studentsData.find(s => s.nisn === inputNisn);
+
+            if(student) {
+                const isLulus = student.status === 'LULUS';
+                
+                // --- LOGIKA KLIK TOMBOL DOWNLOAD ---
+                const actionSKL = (student.link_skl && student.link_skl !== '-') 
+                    ? `window.open('${student.link_skl}', '_blank')` 
+                    : `alert('File SKL belum tersedia di server.')`;
+
+                const actionTKA = (student.link_tka && student.link_tka !== '-') 
+                    ? `window.open('${student.link_tka}', '_blank')` 
+                    : `alert('Sertifikat TKA belum tersedia')`;
+
+                let htmlContent = `
+                    <div class="result-box ${isLulus ? 'lulus' : 'tidak-lulus'}">
+                        <h3 style="margin-bottom:10px; font-size: 18px;">HASIL PENGUMUMAN KELULUSAN</h3>
+                        <div class="student-info">
+                            <table>
+                                <tr><td style="width: 120px;"><strong>Nama Peserta</strong></td><td>: ${student.nama}</td></tr>
+                                <tr><td><strong>NISN</strong></td><td>: ${student.nisn}</td></tr>
+                                <tr><td><strong>Kelas</strong></td><td>: ${student.kelas}</td></tr>
+                            </table>
+                        </div>
+                        <div style="margin: 25px 0 10px; font-size: 15px;">Berdasarkan hasil rapat Pleno Dewan Guru, siswa tersebut dinyatakan:</div>
+                        <div class="result-title">${student.status}</div>
+                        <p style="margin: 15px 0; font-size: 14px; line-height: 1.6;">
+                            ${isLulus 
+                                ? 'Selamat atas kelulusan Anda! Silakan unduh dokumen Surat Keterangan Lulus (SKL) dan Sertifikat TKA Anda melalui tombol di bawah ini.' 
+                                : 'Tetap semangat dan jangan putus asa. Kegagalan hari ini adalah pelajaran untuk bangkit di esok hari.'}
+                        </p>
+                        <div class="nav-buttons" style="display: flex; gap: 10px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
+                            ${isLulus ? `
+                                <button class="btn" style="background: var(--primary); color: white;" onclick="${actionSKL}">📄 Download SKL</button>
+                                <button class="btn" style="background: var(--accent); color: var(--primary);" onclick="${actionTKA}">📜 Download TKA</button>
+                            ` : ''}
+                            <button class="btn" style="background: #e0e0e0; color: #333;" onclick="resetCek()">Cek Siswa Lain</button>
+                        </div>
+                    </div>
+                `;
+                resultArea.innerHTML = htmlContent;
+                resultArea.classList.remove('hidden');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function resetCek() {
+            document.getElementById('nisnInput').value = '';
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('nisnInput').focus();
+        }
+    </script>
+</body>
+</html>
